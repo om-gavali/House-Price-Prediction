@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css">
+    <title>House Price Predictor</title>
+
+    <style>
+      body {
+        background: linear-gradient(135deg, #141e30, #243b55);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #fff;
+      }
+
+      .card {
+        margin-top: 60px;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        border: none;
+        background: #1e2a38;
+        color: #fff;
+      }
+
+      .card-header {
+        background: #00c6ff;
+        background: linear-gradient(45deg, #00c6ff, #0072ff);
+        color: #fff;
+        padding: 20px;
+        text-align: center;
+      }
+
+      .card-header h1 {
+        margin: 0;
+        font-weight: bold;
+        font-size: 2rem;
+        letter-spacing: 1px;
+      }
+
+      .form-group label {
+        font-weight: 600;
+        color: #ddd;
+      }
+
+      .form-control {
+        border-radius: 10px;
+        padding: 12px;
+        font-size: 1rem;
+        border: none;
+        outline: none;
+        box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+      }
+
+      .form-control:focus {
+        box-shadow: 0 0 8px #00c6ff;
+      }
+
+      .btn-primary {
+        background: linear-gradient(45deg, #00c6ff, #0072ff);
+        border: none;
+        border-radius: 12px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        padding: 12px;
+        transition: all 0.3s ease-in-out;
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(45deg, #0072ff, #00c6ff);
+        transform: scale(1.05);
+      }
+
+      #prediction {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-top: 20px;
+        display: inline-block;
+        color: #00ffb3;
+        text-shadow: 0 0 10px rgba(0,255,179,0.7);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h1>🏠 House Price Predictor</h1>
+            </div>
+            <div class="card-body">
+                <form id="predictForm" method="POST" accept-charset="utf-8">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label>Select the Location:</label>
+                            <select name="location" class="form-control" id="location" required>
+                                {% for location in locations %}
+                                <option value="{{location}}">{{location}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 form-group">
+                            <label>Enter BHK:</label>
+                            <input type="text" name="bhk" id="bhk" class="form-control" placeholder="Enter BHK">
+                        </div>
+
+                        <div class="col-md-6 form-group">
+                            <label>Enter Number of Bathrooms:</label>
+                            <input type="text" name="bath" id="bath" class="form-control" placeholder="Enter Number of Bathrooms">
+                        </div>
+
+                        <div class="col-md-6 form-group">
+                            <label>Enter Square Feet:</label>
+                            <input type="text" name="total_sqft" id="total_sqft" class="form-control" placeholder="Enter Square Feet">
+                        </div>
+
+                        <div class="col-md-12 form-group">
+                            <button type="button" class="btn btn-primary form-control" onclick="send_data()">Predict Price</button>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="col-md-12 text-center">
+                    <h3><span id="prediction"></span></h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function send_data() {
+            var fd = new FormData(document.getElementById("predictForm"));
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST','/predict',true);
+            document.getElementById("prediction").innerHTML="⏳ Wait... Predicting Price...";
+
+            xhr.onreadystatechange=function(){
+                if(xhr.readyState== XMLHttpRequest.DONE){
+                    document.getElementById("prediction").innerHTML="💰 Prediction: " + xhr.responseText;
+                }
+            };
+            xhr.send(fd);
+        }
+    </script>
+  </body>
+</html>
